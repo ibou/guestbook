@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 
 class CommentCrudController extends AbstractCrudController
 {
@@ -18,11 +19,14 @@ class CommentCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        return [
-            TextField::new('email'),
-            TextField::new('author'),
-            TextEditorField::new('text'),
-            AssociationField::new('conference')->autocomplete()
-        ];
+
+        yield TextField::new('email');
+        yield TextField::new('author');
+        yield ImageField::new('photoFilename')
+            ->setBasePath('/uploads/photos/')
+            ->setUploadDir('/public/uploads/photos/')
+            ;
+        yield TextEditorField::new('text');
+        yield AssociationField::new('conference')->autocomplete();
     }
 }

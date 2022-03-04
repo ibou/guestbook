@@ -20,10 +20,9 @@ class ConferenceCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        return [ 
-            TextField::new('city'),
-            TextField::new('year'),
-            BooleanField::new('isInternational'),
-        ];
+
+        yield TextField::new('city');
+        yield TextField::new('year');
+        yield BooleanField::new('isInternational');
     }
 }

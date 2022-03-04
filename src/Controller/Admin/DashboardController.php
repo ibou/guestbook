@@ -14,21 +14,21 @@ class DashboardController extends AbstractDashboardController
 {
     #[Route('/admin', name: 'admin')]
     public function index(): Response
-    { 
+    {
         return $this->render('admin/dashboard.html.twig');
     }
 
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Ibou Diallo');
+            ->setTitle('Guest book');
     }
 
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        yield MenuItem::linkToCrud('Conference', 'fas fa-list', Conference::class);
         yield MenuItem::section('Custom section');
+        yield MenuItem::linkToCrud('Conference', 'fas fa-list', Conference::class);
         yield MenuItem::linkToCrud('Comments', 'fas fa-newspaper', Comment::class);
     }
 }

@@ -1,17 +1,35 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ConferenceController!{% endblock %}
+{% block title %}Conference Guestbook{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }} </h1>
-    <p>
-        <img src="{{ asset('images/under-construction.gif') }}" alt="logo" width="100" height="100"> 
-    </p>
+    <h2>Give your feedback! </h2>
+    {# <p>
+        <img src="{{ asset('images/under-construction.gif') }}" alt="logo" width="100" height="100">
+    </p> #}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>City</th>
+                <th>Year </th>
+                <th>is International </th>
+                <th>Show </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for conference in conferences %}
+            <tr>
+                <td>{{ conference.id }}</td>
+                <td>{{ conference.city }}</td>
+                <td>{{ conference.year }}</td>
+                <td>{{ conference.isInternational }}</td>
+                <td><a href="{{path('conference_show', { id: conference.id })}}">View</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
