@@ -12,17 +12,20 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ConferenceController extends AbstractController
 {
-    #[Route('/', name: 'conference')]
+    #[Route('/', name: 'homepage')]
     public function index(ConferenceRepository $conferenceRepository): Response
     {
         return $this->render('conference/index.html.twig', [
-            'conferences' => $conferenceRepository->findAll(),
         ]);
     }
 
-    #[Route('/conference/{id}', name: 'conference_show')]
-    public function show(Request $request, Conference $conference, CommentRepository $commentRepository): Response
-    {
+    #[Route('/conference/{id}', name: 'conference')]
+    public function show(
+        Request $request,
+        Conference $conference,
+        ConferenceRepository $conferenceRepository,
+        CommentRepository $commentRepository
+    ): Response {
         $offset = max(0, $request->query->getInt('offset', 0));
         $paginator = $commentRepository->getCommentsPaginator($conference, $offset);
 
