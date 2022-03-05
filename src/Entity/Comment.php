@@ -20,16 +20,16 @@ class Comment
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     #[Assert\NotBlank]
-    private string $author;
+    private ?string $author = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
-    private string $text;
+    private ?string $text = null;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     #[Assert\NotBlank]
     #[Assert\Email(message: 'The email "{{ value }}" is not a valid email.')]
-    private string $email;
+    private ?string $email = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private \DateTimeInterface $createdAt;
