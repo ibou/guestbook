@@ -7,7 +7,9 @@ use App\Entity\Conference;
 use App\Form\CommentFormType;
 use App\Repository\CommentRepository;
 use App\Repository\ConferenceRepository;
+use App\SpamChecker;
 use Doctrine\Persistence\ManagerRegistry;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,6 +36,7 @@ class ConferenceController extends AbstractController
         Conference $conference,
         ConferenceRepository $conferenceRepository,
         CommentRepository $commentRepository,
+        SpamChecker $spamChecker,
         string $photoDir
     ): Response {
         $comment = new Comment();
@@ -60,10 +63,18 @@ class ConferenceController extends AbstractController
 
             $entityManager = $this->doctrine->getManager();
             $entityManager->persist($comment);
+            $context = [
+                'user_ip' => $request->getClientIp(),
+                'user_agent' => $request->headers->get('User-Agent'),
+                'referer' => $request->headers->get('referer'),
+                'permalink' => $request->getUri(),
+            ];
+            if(2 == $spamChecker->getSpamScore($comment, $context)) {
+                throw new \RuntimeException('Comment rejected as spam');
+            }
             $entityManager->flush();
             return $this->redirectToRoute('conference', ['slug' => $conference->getSlug()]);
         }
-
 
         return $this->render('conference/show.html.twig', [
             'conference' => $conference,
