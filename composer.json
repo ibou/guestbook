@@ -46,6 +46,7 @@
         "symfony/yaml": "6.0.*",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/intl-extra": "^3.3",
+        "twig/string-extra": "^3.3",
         "twig/twig": "^2.12|^3.0"
     },
     "config": {
@@ -90,10 +91,14 @@
             "@auto-scripts"
         ],
         "database": [
-            "@update-database"
+            "@update-database",
+            "@update-database-test"
         ],
         "update-database": [
             "php bin/console doctrine:schema:update --force"
+        ],
+        "update-database-test": [
+            "php bin/console doctrine:schema:update --force --env=test"
         ]
     },
     "conflict": {
@@ -106,6 +111,7 @@
         }
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
         "phpunit/phpunit": "^9.5",
         "symfony/browser-kit": "6.0.*",
         "symfony/css-selector": "6.0.*",
