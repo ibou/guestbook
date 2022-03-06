@@ -66,6 +66,5 @@ prepare-dev:
 	make fixtures-dev
 
 tests: 
-	make fixtures-test
 	symfony php bin/phpunit --testdox
 .PHONY: tests

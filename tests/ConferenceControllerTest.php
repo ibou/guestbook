@@ -2,36 +2,38 @@
 
 namespace App\Tests;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Panther\PantherTestCase;
 
-class ConferenceControllerTest extends WebTestCase
+class ConferenceControllerTest extends PantherTestCase
 {
+
     public function testIndex(): void
     {
-        $client = static::createClient();
+        // $client = static::createClient();
+        $client = static::createPantherClient();
         $crawler = $client->request('GET', '/');
 
-        $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h2', 'Give your feedback!');
     }
 
-     public function testCommentSubmission(): void
-        {
-            $client = static::createClient();
-            $crawler = $client->request('GET', '/conference/amsterdam-2019'); 
-            $form = [
-                'comment_form[author]' => 'Fabien',
-                'comment_form[text]' => 'I am a comment',
-                'comment_form[email]' => 'test@email.com',
-                'comment_form[photo]' => \dirname(__DIR__, 2).'/public/images/under-construction.gif',
-            ];
-            $client->submitForm('Submit',$form);
-            $this->assertResponseRedirects();
-            $client->followRedirect();
-            $this->assertSelectorExists('div:contains("There are 3 comments")');
-        }
 
-            public function testConferencePage(): void
+    public function testCommentSubmission(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/conference/amsterdam-2019');
+        $form = [
+            'comment_form[author]' => 'Fabien',
+            'comment_form[text]' => 'I am a comment',
+            'comment_form[email]' => 'test@email.com',
+            'comment_form[photo]' => \dirname(__DIR__, 2) . '/public/images/under-construction.gif',
+        ];
+        $client->submitForm('Submit', $form);
+        $this->assertResponseRedirects();
+        $client->followRedirect();
+        $this->assertSelectorExists('div:contains("There are 3 comments")');
+    }
+
+    public function testConferencePage(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/');
@@ -43,5 +45,4 @@ class ConferenceControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h2', 'Amsterdam');
         $this->assertSelectorExists('div:contains("There are 2 comments")');
     }
-
 }
