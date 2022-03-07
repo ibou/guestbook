@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
+use App\ImageOptimizer;
 use App\SpamChecker;
 use Psr\Log\NullLogger;
 use Psr\Log\LoggerInterface;
@@ -26,6 +27,7 @@ class CommentMessageHandler implements MessageHandlerInterface
         private MessageBusInterface $bus,
         private WorkflowInterface $commentStateMachine,
         private MailerInterface $mailer,
+        private ImageOptimizer $imageOptimizer,
         private string $adminEmail,
         private ?LoggerInterface $logger = null
     ) {
@@ -50,16 +52,22 @@ class CommentMessageHandler implements MessageHandlerInterface
             $this->commentStateMachine->apply($comment, $transition);
             $this->entityManager->flush();
             $this->bus->dispatch($message);
-        } elseif ($this->commentStateMachine->can($comment, 'publish') || $this->commentStateMachine->can($comment, 'publish_ham')) {
-            $this->commentStateMachine->apply($comment, $this->commentStateMachine->can($comment, 'publish') ? 'publish' : 'publish_ham');
+        } elseif ($this->commentStateMachine->can($comment, 'optimize')) {
+            if ($comment->getPhotoFilename()) {
+                $this->imageOptimizer->resize($this->photoDir . '/' . $comment->getPhotoFilename());
+            }
+            $this->commentStateMachine->apply($comment, 'optimize');
             $this->entityManager->flush();
-            $this->mailer->send((new NotificationEmail())
-                    ->subject('New comment posted')
-                    ->htmlTemplate('emails/comment_notification.html.twig')
-                    ->from($this->adminEmail)
-                    ->to($this->adminEmail)
-                    ->context(['comment' => $comment])
-            );
+            // elseif ($this->commentStateMachine->can($comment, 'publish') || $this->commentStateMachine->can($comment, 'publish_ham')) {
+            //     $this->commentStateMachine->apply($comment, $this->commentStateMachine->can($comment, 'publish') ? 'publish' : 'publish_ham');
+            //     $this->entityManager->flush();
+            //     $this->mailer->send((new NotificationEmail())
+            //             ->subject('New comment posted')
+            //             ->htmlTemplate('emails/comment_notification.html.twig')
+            //             ->from($this->adminEmail)
+            //             ->to($this->adminEmail)
+            //             ->context(['comment' => $comment])
+            //     );
         } else {
             $this->logger->warning('Dropping comment message', ['comment' => $comment->getId(), 'state' => $comment->getState()]);
         }
