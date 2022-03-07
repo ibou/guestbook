@@ -13,6 +13,7 @@ class ConferenceControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $client->request('GET', '/');
+        
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h2', 'Give your feedback');
@@ -32,7 +33,7 @@ class ConferenceControllerTest extends WebTestCase
         $this->assertResponseRedirects();
 
         $client->followRedirect();
-        $this->assertSelectorExists('div:contains("There are 3 comments")');
+        $this->assertSelectorExists('div:contains("There are 1 comments")');
     }
     public function testCommentSubmissionAdded()
     {
@@ -60,6 +61,6 @@ class ConferenceControllerTest extends WebTestCase
         $this->assertPageTitleContains('Amsterdam');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h2', 'Amsterdam 2019');
-        $this->assertSelectorExists('div:contains("There are 2 comments")');
+        $this->assertSelectorExists('div:contains("There are 1 comments")');
     }
 }

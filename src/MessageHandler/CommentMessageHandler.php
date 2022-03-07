@@ -10,6 +10,8 @@ use Psr\Log\LoggerInterface;
 use App\Message\CommentMessage;
 use App\Repository\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
@@ -23,6 +25,8 @@ class CommentMessageHandler implements MessageHandlerInterface
         private CommentRepository $commentRepository,
         private MessageBusInterface $bus,
         private WorkflowInterface $commentStateMachine,
+        private MailerInterface $mailer,
+        private string $adminEmail,
         private ?LoggerInterface $logger = null
     ) {
         $this->logger = $logger ?? new NullLogger();
@@ -34,7 +38,7 @@ class CommentMessageHandler implements MessageHandlerInterface
         if (!$comment) {
             return;
         }
-        
+
         if ($this->commentStateMachine->can($comment, 'accept')) {
             $score = $this->spamChecker->getSpamScore($comment, $message->getContext());
             $transition = 'accept'; // default transition (if $score ===0)
@@ -49,6 +53,13 @@ class CommentMessageHandler implements MessageHandlerInterface
         } elseif ($this->commentStateMachine->can($comment, 'publish') || $this->commentStateMachine->can($comment, 'publish_ham')) {
             $this->commentStateMachine->apply($comment, $this->commentStateMachine->can($comment, 'publish') ? 'publish' : 'publish_ham');
             $this->entityManager->flush();
+            $this->mailer->send((new NotificationEmail())
+                    ->subject('New comment posted')
+                    ->htmlTemplate('emails/comment_notification.html.twig')
+                    ->from($this->adminEmail)
+                    ->to($this->adminEmail)
+                    ->context(['comment' => $comment])
+            );
         } else {
             $this->logger->warning('Dropping comment message', ['comment' => $comment->getId(), 'state' => $comment->getState()]);
         }
