@@ -18,7 +18,10 @@ class CommentFormType extends AbstractType
         $builder
             ->add('author', null, [
                 'label' => 'Your name',])
-            ->add('text')
+            ->add('text', null, [
+                'label' => 'Your comment', 
+                'data' => 'great',
+                ])
             ->add('email',EmailType::class) 
             ->add('photo', FileType::class, [
                 'label' => 'Your photo (optional)',
