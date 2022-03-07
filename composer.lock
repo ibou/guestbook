@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d6c08d093d00e6dc73caacb0441a43c9",
+    "content-hash": "33c24015f9e91ba2395d854bb16d2861",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -4953,16 +4953,16 @@
         },
         {
             "name": "symfony/notifier",
-            "version": "v6.0.3",
+            "version": "v6.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/notifier.git",
-                "reference": "fa504891d47679f2696e26c98afe2e156b24d371"
+                "reference": "ca831b1d738fef25cb2bf9498ff36e7480dd22d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/notifier/zipball/fa504891d47679f2696e26c98afe2e156b24d371",
-                "reference": "fa504891d47679f2696e26c98afe2e156b24d371",
+                "url": "https://api.github.com/repos/symfony/notifier/zipball/ca831b1d738fef25cb2bf9498ff36e7480dd22d8",
+                "reference": "ca831b1d738fef25cb2bf9498ff36e7480dd22d8",
                 "shasum": ""
             },
             "require": {
@@ -5008,7 +5008,7 @@
                 "notifier"
             ],
             "support": {
-                "source": "https://github.com/symfony/notifier/tree/v6.0.3"
+                "source": "https://github.com/symfony/notifier/tree/v6.0.6"
             },
             "funding": [
                 {
@@ -5024,7 +5024,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-01-02T09:55:41+00:00"
+            "time": "2022-03-02T13:18:22+00:00"
         },
         {
             "name": "symfony/options-resolver",
@@ -6734,6 +6734,76 @@
                 }
             ],
             "time": "2021-11-04T17:53:12+00:00"
+        },
+        {
+            "name": "symfony/slack-notifier",
+            "version": "v6.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/slack-notifier.git",
+                "reference": "895d549d1eb270c0f54693d6375e87235f753551"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/slack-notifier/zipball/895d549d1eb270c0f54693d6375e87235f753551",
+                "reference": "895d549d1eb270c0f54693d6375e87235f753551",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0.2",
+                "symfony/http-client": "^5.4|^6.0",
+                "symfony/notifier": "^5.4|^6.0"
+            },
+            "require-dev": {
+                "symfony/event-dispatcher": "^5.4|^6.0"
+            },
+            "type": "symfony-notifier-bridge",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Notifier\\Bridge\\Slack\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Slack Notifier Bridge",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "notifier",
+                "slack"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/slack-notifier/tree/v6.0.3"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2022-01-02T09:55:41+00:00"
         },
         {
             "name": "symfony/stopwatch",
