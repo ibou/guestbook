@@ -5,8 +5,8 @@ namespace App\Controller;
 use App\Entity\Comment;
 use App\Entity\Conference;
 use App\Form\CommentFormType;
+use App\Message\CommentMessage;
 use App\Repository\CommentRepository;
-use App\Repository\ConferenceRepository;
 use App\SpamChecker;
 use Doctrine\Persistence\ManagerRegistry;
 use RuntimeException;
@@ -15,17 +15,17 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class ConferenceController extends AbstractController
 {
-    public function __construct(private ManagerRegistry $doctrine)
+    public function __construct(private ManagerRegistry $doctrine, private MessageBusInterface $bus)
     {
-        $this->doctrine = $doctrine;
-    }
+    } 
 
 
     #[Route('/', name: 'homepage')]
-    public function index(ConferenceRepository $conferenceRepository): Response
+    public function index(): Response
     {
         return $this->render('conference/index.html.twig', []);
     }
@@ -34,7 +34,6 @@ class ConferenceController extends AbstractController
     public function show(
         Request $request,
         Conference $conference,
-        ConferenceRepository $conferenceRepository,
         CommentRepository $commentRepository,
         SpamChecker $spamChecker,
         string $photoDir
@@ -63,16 +62,17 @@ class ConferenceController extends AbstractController
 
             $entityManager = $this->doctrine->getManager();
             $entityManager->persist($comment);
+            $entityManager->flush();
             $context = [
                 'user_ip' => $request->getClientIp(),
                 'user_agent' => $request->headers->get('User-Agent'),
                 'referer' => $request->headers->get('referer'),
                 'permalink' => $request->getUri(),
             ];
-            if(2 == $spamChecker->getSpamScore($comment, $context)) {
-                throw new \RuntimeException('Comment rejected as spam');
-            }
-            $entityManager->flush();
+            // if(2 == $spamChecker->getSpamScore($comment, $context)) {
+            //     throw new \RuntimeException('Comment rejected as spam');
+            // }
+            $this->bus->dispatch(new CommentMessage($comment->getId(), $context));
             return $this->redirectToRoute('conference', ['slug' => $conference->getSlug()]);
         }
 

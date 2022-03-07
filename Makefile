@@ -68,3 +68,6 @@ prepare-dev:
 tests: 
 	symfony php bin/phpunit --testdox
 .PHONY: tests
+
+consume:
+	symfony console messenger:consume async -vv

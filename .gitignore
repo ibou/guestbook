@@ -26,3 +26,4 @@ yarn-error.log
 .phpunit.result.cache
 ###< phpunit/phpunit ###
 drivers
+public/uploads/photos
