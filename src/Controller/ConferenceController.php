@@ -2,32 +2,41 @@
 
 namespace App\Controller;
 
+use App\SpamChecker;
+use RuntimeException;
 use App\Entity\Comment;
 use App\Entity\Conference;
 use App\Form\CommentFormType;
 use App\Message\CommentMessage;
 use App\Repository\CommentRepository;
-use App\SpamChecker;
+use App\Repository\ConferenceRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 class ConferenceController extends AbstractController
 {
     public function __construct(private ManagerRegistry $doctrine, private MessageBusInterface $bus)
     {
-    } 
+    }
 
 
     #[Route('/', name: 'homepage')]
     public function index(): Response
     {
         return $this->render('conference/index.html.twig', []);
+    }
+
+    #[Route('/{_locale<%app.supported_locales%>}/conference_header', name: 'conference_header')]
+    public function conferenceHeader(ConferenceRepository $conferenceRepository): Response
+    {
+        return $this->render('conference/header.html.twig', [
+            'conferences' => $conferenceRepository->findAll(),
+        ]);
     }
 
     #[Route('/conference/{slug}', name: 'conference')]
@@ -47,18 +56,18 @@ class ConferenceController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $comment->setConference($conference);
-                if($photo = $form['photo']->getData()) {
-                    $filename = md5(uniqid()).'.'.$photo->guessExtension();
-                    try {
-                        $photo->move(
-                            $photoDir,
-                            $filename
-                        );
-                    } catch (FileException $e) {
-                        // ... handle exception if something happens during file upload
-                    }
-                    $comment->setPhotoFilename($filename);
-                }  
+            if ($photo = $form['photo']->getData()) {
+                $filename = md5(uniqid()) . '.' . $photo->guessExtension();
+                try {
+                    $photo->move(
+                        $photoDir,
+                        $filename
+                    );
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+                $comment->setPhotoFilename($filename);
+            }
 
             $entityManager = $this->doctrine->getManager();
             $entityManager->persist($comment);
