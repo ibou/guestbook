@@ -2,33 +2,48 @@
 
 namespace App\Entity;
 
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CommentRepository;
-use DateTimeImmutable;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[ApiResource(
+    collectionOperations: ['get' => ['normalization_context' => ['groups' => 'comment:list']]],
+    itemOperations: ['get' => ['normalization_context' => ['groups' => 'comment:item']]],
+    order: ['createdAt' => 'DESC'],
+    paginationEnabled: false,
+)]
+#[ApiFilter(SearchFilter::class, properties: ['conference' => 'exact'])]
 class Comment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER)]
+    #[Groups(['comment:list', 'comment:item'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     #[Assert\NotBlank]
+    #[Groups(['comment:list', 'comment:item'])]
     private ?string $author = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
+    #[Groups(['comment:list', 'comment:item'])]
     private ?string $text = null;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     #[Assert\NotBlank]
     #[Assert\Email(message: 'The email "{{ value }}" is not a valid email.')]
+    #[Groups(['comment:list', 'comment:item'])]
     private ?string $email = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
@@ -36,12 +51,15 @@ class Comment
 
     #[ORM\ManyToOne(targetEntity: Conference::class, inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['comment:list', 'comment:item'])]
     private ?Conference $conference = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    #[Groups(['comment:list', 'comment:item'])]
     private ?string $photoFilename;
 
     #[ORM\Column(type: Types::STRING, length: 255, options: ['default' => 'submitted'])]
+    #[Groups(['comment:list', 'comment:item'])]
     private ?string $state = 'submitted';
 
 

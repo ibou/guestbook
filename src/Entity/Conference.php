@@ -2,37 +2,50 @@
 
 namespace App\Entity;
 
-use App\Repository\ConferenceRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use App\Repository\ConferenceRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ConferenceRepository::class)]
 #[UniqueEntity(fields: 'slug', message: 'This slug is already used')]
+#[ApiResource(
+    collectionOperations: ['get' => ['normalization_context' => ['groups' => 'conference:list']]],
+    itemOperations: ['get' => ['normalization_context' => ['groups' => 'conference:item']]],
+    order: ['year' => 'DESC', 'city' => 'ASC'],
+    paginationEnabled: false,
+)]
 class Conference
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER)]
+    #[Groups(['conference:list', 'conference:item'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(['conference:list', 'conference:item'])]
     private string $city;
 
     #[ORM\Column(type: Types::STRING, length: 4)]
+    #[Groups(['conference:list', 'conference:item'])]
     private string $year;
 
     #[ORM\Column(type: Types::BOOLEAN)]
+    #[Groups(['conference:list', 'conference:item'])]
     private bool $isInternational;
 
-    #[ORM\OneToMany(mappedBy: 'conference', targetEntity: Comment::class, orphanRemoval: true)]
-    private Collection $comments;
-
     #[ORM\Column(type: Types::STRING, length: 255, unique: true)]
+    #[Groups('conference:list', 'conference:item')]
     private ?string $slug = null;
+
+    #[ORM\OneToMany(mappedBy: 'conference', targetEntity: Comment::class, orphanRemoval: true)] 
+    private Collection $comments;
 
     public function __construct()
     {
