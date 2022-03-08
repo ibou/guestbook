@@ -13,7 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
 class AppFixtures extends Fixture
 {
-    private $passwordHasherFactory;
+    private PasswordHasherFactoryInterface $passwordHasherFactory;
 
     public function __construct(PasswordHasherFactoryInterface $encoderFactory)
     {

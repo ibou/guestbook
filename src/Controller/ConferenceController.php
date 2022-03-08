@@ -65,7 +65,7 @@ class ConferenceController extends AbstractController
                         $filename
                     );
                 } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
+                    throw new \Exception('Unable to upload photo');
                 }
                 $comment->setPhotoFilename($filename);
             }

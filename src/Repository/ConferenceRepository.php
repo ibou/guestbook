@@ -47,6 +47,11 @@ class ConferenceRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * Undocumented function
+     *
+     * @return array<Conference>
+     */
     public function findAll(): array
     {
         return $this->findBy([], ['year' => 'ASC', 'city' => 'ASC']);
