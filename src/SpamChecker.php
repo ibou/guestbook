@@ -33,7 +33,7 @@ class SpamChecker
         ]);
 
         $headers = $response->getHeaders();
-        if ('discard' === ($headers['x-akismet-pro-tip'][0] ?? '')) {
+        if (($headers['x-akismet-pro-tip'][0] ?? '') === 'discard') {
             return 2;
         }
 
@@ -46,6 +46,6 @@ class SpamChecker
             ));
         }
 
-        return 'true' === $content ? 1 : 0;
+        return $content === 'true' ? 1 : 0;
     }
 }

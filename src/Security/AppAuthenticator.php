@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -50,7 +52,7 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         // For example:
-        return new RedirectResponse($this->urlGenerator->generate('homepage')); 
+        return new RedirectResponse($this->urlGenerator->generate('homepage'));
     }
 
     protected function getLoginUrl(Request $request): string

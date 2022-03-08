@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\AdminRepository;
@@ -24,6 +26,11 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: Types::STRING)]
     private string $password;
+
+    public function __toString()
+    {
+        return $this->username;
+    }
 
     public function getId(): ?int
     {
@@ -74,12 +81,7 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
-    }
-
-    public function __toString()
-    {
-        return $this->username;
     }
 }

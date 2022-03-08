@@ -1,32 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
-use App\SpamChecker;
-use RuntimeException;
 use App\Entity\Comment;
 use App\Entity\Conference;
 use App\Form\CommentFormType;
 use App\Message\CommentMessage;
 use App\Repository\CommentRepository;
 use App\Repository\ConferenceRepository;
+use App\SpamChecker;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Notifier\NotifierInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Notifier\Notification\Notification;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Notifier\Notification\Notification;
+use Symfony\Component\Notifier\NotifierInterface;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ConferenceController extends AbstractController
 {
     public function __construct(private ManagerRegistry $doctrine, private MessageBusInterface $bus)
     {
     }
-
 
     #[Route('/', name: 'homepage')]
     public function index(): Response
@@ -54,7 +54,6 @@ class ConferenceController extends AbstractController
         $comment = new Comment();
         $form = $this->createForm(CommentFormType::class, $comment);
 
-
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $comment->setConference($conference);
@@ -79,7 +78,7 @@ class ConferenceController extends AbstractController
                 'user_agent' => $request->headers->get('User-Agent'),
                 'referer' => $request->headers->get('referer'),
                 'permalink' => $request->getUri(),
-            ]; 
+            ];
             $reviewUrl = $this->generateUrl('review_comment', ['id' => $comment->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
             $this->bus->dispatch(new CommentMessage($comment->getId(), $reviewUrl, $context));
             $notifier->send(new Notification('/!\ ... Thank you for the feedback; your comment will be posted after moderation.', ['browser']));

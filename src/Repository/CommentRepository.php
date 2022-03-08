@@ -1,21 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Comment;
 use App\Entity\Conference;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Comment|null find($id, $lockMode = null, $lockVersion = null)
  * @method Comment|null findOneBy(array $criteria, array $orderBy = null)
- * @method Comment[]    findAll()
- * @method Comment[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method array<Comment> findAll()
+ * @method array<Comment> findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class CommentRepository extends ServiceEntityRepository
 {
@@ -37,18 +39,6 @@ class CommentRepository extends ServiceEntityRepository
         return $this->getOldRejectedQueryBuilder()->delete()->getQuery()->execute();
     }
 
-    private function getOldRejectedQueryBuilder(): QueryBuilder
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.state = :state_rejected or c.state = :state_spam')
-            ->andWhere('c.createdAt < :date')
-            ->setParameters([
-                'state_rejected' => 'rejected',
-                'state_spam' => 'spam',
-                'date' => new \DateTimeImmutable(-self::DAYS_BEFORE_REJECTED_REMOVAL . ' days'),
-            ]);
-    }
-    
     /**
      * @throws ORMException
      * @throws OptimisticLockException
@@ -86,5 +76,17 @@ class CommentRepository extends ServiceEntityRepository
             ->getQuery();
 
         return new Paginator($query);
+    }
+
+    private function getOldRejectedQueryBuilder(): QueryBuilder
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.state = :state_rejected or c.state = :state_spam')
+            ->andWhere('c.createdAt < :date')
+            ->setParameters([
+                'state_rejected' => 'rejected',
+                'state_spam' => 'spam',
+                'date' => new \DateTimeImmutable(-self::DAYS_BEFORE_REJECTED_REMOVAL . ' days'),
+            ]);
     }
 }

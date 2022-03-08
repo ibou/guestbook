@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Comment;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\Image;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Image;
 
 class CommentFormType extends AbstractType
 {
@@ -17,12 +19,13 @@ class CommentFormType extends AbstractType
     {
         $builder
             ->add('author', null, [
-                'label' => 'Your name',])
+                'label' => 'Your name',
+            ])
             ->add('text', null, [
-                'label' => 'Your comment', 
+                'label' => 'Your comment',
                 'data' => 'great',
-                ])
-            ->add('email',EmailType::class) 
+            ])
+            ->add('email', EmailType::class)
             ->add('photo', FileType::class, [
                 'label' => 'Your photo (optional)',
                 'required' => false,
@@ -38,13 +41,13 @@ class CommentFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('submit', SubmitType::class, [ 
+            ->add('submit', SubmitType::class, [
                 'label' => 'Submit',
                 'attr' => [
                     'class' => 'btn btn-primary',
                 ],
             ])
-            
+
         ;
     }
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App;
 
-use Imagine\Image\Box;
 use Imagine\Gd\Imagine;
+use Imagine\Image\Box;
 
 class ImageOptimizer
 {
@@ -21,7 +21,7 @@ class ImageOptimizer
 
     public function resize(string $filename): void
     {
-        list($iwidth, $iheight) = getimagesize($filename);
+        [$iwidth, $iheight] = getimagesize($filename);
         $ratio = $iwidth / $iheight;
         $width = self::MAX_WIDTH;
         $height = self::MAX_HEIGHT;

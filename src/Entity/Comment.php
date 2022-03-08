@@ -1,17 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-use DateTimeImmutable;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
-use App\Repository\CommentRepository;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Repository\CommentRepository;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -62,6 +62,10 @@ class Comment
     #[Groups(['comment:list', 'comment:item'])]
     private ?string $state = 'submitted';
 
+    public function __toString(): string
+    {
+        return (string) $this->email;
+    }
 
     public function getId(): ?int
     {
@@ -116,7 +120,7 @@ class Comment
         return $this;
     }
     #[ORM\PrePersist]
-    public function setCreatedAtValue()
+    public function setCreatedAtValue(): void
     {
         $this->createdAt = new \DateTimeImmutable();
     }
@@ -131,11 +135,6 @@ class Comment
         $this->conference = $conference;
 
         return $this;
-    }
-
-    public function __toString(): string
-    {
-        return (string) $this->email;
     }
 
     public function getPhotoFilename(): ?string
