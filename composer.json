@@ -63,7 +63,8 @@
             "composer/package-versions-deprecated": true,
             "symfony/flex": true,
             "symfony/runtime": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true
         },
         "optimize-autoloader": true,
         "preferred-install": {
@@ -101,6 +102,7 @@
             "@auto-scripts"
         ],
         "phpinsights": "vendor/bin/phpinsights --no-interaction",
+        "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon src --no-progress",
         "database": [
             "@update-database",
             "@update-database-test"
@@ -120,6 +122,11 @@
             "allow-contrib": true,
             "require": "6.0.*",
             "docker": true
+        },  
+        "phpstan": {
+            "includes": [
+                "extension.neon"
+            ]
         }
     },
     "require-dev": {
@@ -127,6 +134,9 @@
         "dbrekelmans/bdi": "^1.0",
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "nunomaduro/phpinsights": "^2.1",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan-doctrine": "^1.2",
+        "phpstan/phpstan-symfony": "^1.1",
         "phpunit/phpunit": "^9.5",
         "symfony/browser-kit": "6.0.*",
         "symfony/css-selector": "6.0.*",

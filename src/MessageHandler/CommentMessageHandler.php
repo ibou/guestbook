@@ -27,7 +27,7 @@ class CommentMessageHandler implements MessageHandlerInterface
         private WorkflowInterface $commentStateMachine,
         private NotifierInterface $notifier,
         private ImageOptimizer $imageOptimizer,
-        private string $adminEmail,
+        private string $photoDir,
         private ?LoggerInterface $logger = null
     ) {
         $this->logger = $logger ?? new NullLogger();
@@ -63,7 +63,7 @@ class CommentMessageHandler implements MessageHandlerInterface
             }
             $this->commentStateMachine->apply($comment, 'optimize');
             $this->entityManager->flush();
-        } else {
+        } elseif ($this->logger) {
             $this->logger->warning('Dropping comment message', ['comment' => $comment->getId(), 'state' => $comment->getState()]);
         }
     }

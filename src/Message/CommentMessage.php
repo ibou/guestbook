@@ -6,7 +6,10 @@ namespace App\Message;
 
 class CommentMessage
 {
-    public function __construct(private int $id, private string $reviewUrl, private array $context = [])
+    /**
+     * @param array<int,string> $context
+     */
+    public function __construct(private readonly int $id, private readonly string $reviewUrl, private array $context = [])
     {
     }
 
@@ -20,6 +23,9 @@ class CommentMessage
         return $this->reviewUrl;
     }
 
+    /**
+     * @return array<int,string> $context
+     */
     public function getContext(): array
     {
         return $this->context;

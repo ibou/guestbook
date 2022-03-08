@@ -50,14 +50,14 @@ class CommentReviewNotification extends Notification implements EmailNotificatio
                 ->block((new SlackSectionBlock())->text($this->getSubject()))
                 ->block(new SlackDividerBlock())
                 ->block(
-                (new SlackSectionBlock())
-                    ->text(sprintf('%s (%s) says: %s', $this->comment->getAuthor(), $this->comment->getEmail(), $this->comment->getText()))
-            )
+                    (new SlackSectionBlock())
+                        ->text(sprintf('%s (%s) says: %s', $this->comment->getAuthor(), $this->comment->getEmail(), $this->comment->getText()))
+                )
                 ->block(
-                (new SlackActionsBlock())
-                    ->button('Accept', $this->reviewUrl, 'primary')
-                    ->button('Rejected slack', $this->reviewUrl . '?reject=1', 'danger')
-            )
+                    (new SlackActionsBlock())
+                        ->button('Accept', $this->reviewUrl, 'primary')
+                        ->button('Rejected slack', $this->reviewUrl . '?reject=1', 'danger')
+                )
         );
 
         return $message;

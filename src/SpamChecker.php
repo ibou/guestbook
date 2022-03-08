@@ -16,6 +16,9 @@ class SpamChecker
         $this->endpoint = sprintf('https://%s.rest.akismet.com/1.1/comment-check', $akismetKey);
     }
 
+    /**
+     * @param array<int, string> $context
+     */
     public function getSpamScore(Comment $comment, array $context): int
     {
         $response = $this->client->request('POST', $this->endpoint, [

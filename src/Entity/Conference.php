@@ -43,9 +43,12 @@ class Conference
     private bool $isInternational;
 
     #[ORM\Column(type: Types::STRING, length: 255, unique: true)]
-    #[Groups('conference:list', 'conference:item')]
+    #[Groups(['conference:list', 'conference:item'])]
     private ?string $slug = null;
 
+    /**
+     * @var Collection<int, Comment>
+     */
     #[ORM\OneToMany(mappedBy: 'conference', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
 
